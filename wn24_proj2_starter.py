@@ -71,7 +71,50 @@ def listing_details(listing_id):
         ('2022-004088STR', 'Brian', 'Entire Room', 4.98, 181)
 
     """
-    pass
+     with open(f"html_files/listing_{listing_id}.html", 'r', encoding="utf-8-sig") as file:
+        soup = BeautifulSoup(file, 'html.parser')
+        
+        # get policy number
+        policy_number = "Exempt"
+        policy_element = soup.find('li', class_='f19phm7j')
+        if policy_element:
+            policy_number = policy_element.get_text(strip=True).split(":")[-1].strip()
+
+        #get host name
+        host_name = 'missing'
+        subtitle = soup.find('h2', class_='_14i3z6h')
+        if subtitle:
+            host_name = subtitle.get_text(strip=True).split("hosted by")[-1].strip()
+            if not host_name:
+                host_name = 'missing'        
+        
+        #get place type
+        place_type = "Entire Room"
+        # Extract the room type from subtitle
+        if "private" in subtitle:
+            place_type = "Private Room"
+        elif "shared" in subtitle:
+            place_type = "Shared Room"
+        
+        #get review score
+        review_score = 0.0
+        review_element = soup.find('span', class_='_17p6nbba')
+        if review_element:
+            review_text = review_element.get_text(strip=True)[:4]
+            if review_text:
+                review_score = float(review_text)
+        
+        #get price per night
+        nightly_price = 0
+        prices = soup.find_all('span', class_='a8jt5op')
+        for price in prices:
+            price_text = price.get_text(strip=True)
+            if '$' in price_text:
+                nightly_price = int(price_text[1:5])
+                break
+
+        return (policy_number, host_name, place_type, review_score, nightly_price)
+        
 
 def make_listing_database(html_file): 
     """
