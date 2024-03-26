@@ -357,7 +357,18 @@ def test_write_csv(self):
         for i in csv_reader:
             csv_lines.append(i)
 
+ #check that there are 18 listings and a heading (19 rows)
     self.assertEqual(len(csv_lines), 19)
+
+        # check that the header row is correct
+    self.assertEqual(header_row, ["Listing Title", "Listing ID", "Policy Number", "Host Name(s)", "Place Type", "Average Review Score", "Nightly Rate"])
+
+        # check that the next row is Apartment in Noe Valley,824047084487341932,2022-008652STR,Eileen,Entire Room,0.0,176
+    next_row = csv_lines[1]
+    expected =   ['Apartment in Noe Valley', '824047084487341932', '2022-008652STR', 'Eileen', 'Entire Room', '0.0', '176']
+    self.assertEqual(next_row, expected)
+
+
 
 
 
