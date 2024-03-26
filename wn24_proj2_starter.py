@@ -254,6 +254,8 @@ class TestCases(unittest.TestCase):
         self.listings = retrieve_listings("html_files/search_results.html")
 
     def test_retrieve_listings(self):
+        with open("html_files/search_results.html", "r") as file:
+            self.html_content = file.read()
         # call retrieve_listings("html_files/search_results.html")
         # and save to a local variable
 
@@ -264,10 +266,14 @@ class TestCases(unittest.TestCase):
         self.assertEqual(type(self.listings), list)
 
         # check that each item in the list is a tuple
+        self.assertTrue(all(isinstance(item, tuple) for item in self.listings))
+        # check that the first title and listings id tuple is correct (open the search results html and find it)
+        first_listing = self.listings[0]
+        self.assertEqual(first_listing, ("Loft in Mission District", "1944564"))
 
-        # check that the first title and listing id tuple is correct (open the search results html and find it)
-
-        # check that the last title and listing id tuple is correct (open the search results html and find it)
+        # check that the last title and listings id tuple is correct (open the search results html and find it)
+        last_listing = self.listings[-1]
+        self.assertEqual(last_listing, ("Guest suite in Mission District", "467507"))
 
     def test_listing_details(self):
         html_list = ["467507",
@@ -279,7 +285,7 @@ class TestCases(unittest.TestCase):
         # call listing_details for i in html_list:
         listing_information = [listing_details(id) for id in html_list]
 
-        # check that the number of listing information is correct (5)
+        # check that the number of listings information is correct (5)
         self.assertEqual(len(listing_information), 5)
         for info in listing_information:
             # check that each item in the list is a tuple
@@ -295,11 +301,12 @@ class TestCases(unittest.TestCase):
             # check that the fifth element in the tuple is an int
             self.assertEqual(type(info[4]), int)
 
-        # check that the first listing in the html_list has the correct policy number
+        # check that the first listings in the html_list has the correct policy number
 
-        # check that the last listing in the html_list has the correct place type
+        # check that the last listings in the html_list has the correct place type
 
-        # check that the third listing has the correct cost
+        # check that the third listings has the correct cost
+        
 
     def test_make_listing_database(self):
         # call make_listing_database on "html_files/search_results.html"
@@ -308,41 +315,52 @@ class TestCases(unittest.TestCase):
 
         # check that we have the right number of listings (18)
         self.assertEqual(len(detailed_data), 18)
-
-        for item in detailed_data:
+        for i in detailed_data:
             # assert each item in the list of listings is a tuple
-            self.assertEqual(type(item), tuple)
+                self.assertEqual(type(i), tuple)
             # check that each tuple has a length of 7
+                self.assertEqual(len(i), 7)
 
         # check that the first tuple is made up of the following:
         # ('Loft in Mission District', '1944564', '2022-004088STR', 'Brian', 'Entire Room', 4.98, 181)
-
+        self.assertEqual(detailed_data[0], ('Loft in Mission District', '1944564', '2022-004088STR', 'Brian', 'Entire Room', 4.98, 181))
         # check that the last tuple is made up of the following:
         # ('Guest suite in Mission District', '467507', 'STR-0005349', 'Jennifer', 'Entire Room', 4.95, 165)
+        self.assertEqual(detailed_data[-1], ('Guest suite in Mission District', '467507', 'STR-0005349', 'Jennifer', 'Entire Room', 4.95, 165))
+        
 
-    def test_write_csv(self):
-        # call make_listing_database on "html_files/search_results.html"
-        # and save the result to a variable
-        detailed_data = make_listing_database("html_files/search_results.html")
+def test_write_csv(self):
+    detailed_data = make_listing_database("html_files/search_results.html")
+    write_csv(detailed_data, "test.csv")
+    csv_lines = []
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
+        csv_reader = csv.reader(f)
+        for i in csv_reader:
+            csv_lines.append(i)
 
-        # call write_csv() on the variable you saved
-        write_csv(detailed_data, "test.csv")
+    self.assertEqual(len(csv_lines), 19)
 
-        # read in the csv that you wrote
-        csv_lines = []
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
-            csv_reader = csv.reader(f)
-            for i in csv_reader:
-                csv_lines.append(i)
+    header_row = csv_lines[0]
+    self.assertEqual(header_row, ['Title', 'ID', 'Code', 'Host', 'Room Type', 'Rating', 'Price'])
 
-        # check that there are 19 lines in the csv
-        self.assertEqual(len(csv_lines), 19)
+    second_row = csv_lines[1]
+    self.assertEqual(second_row, ['Apartment in Noe Valley', '824047084487341932', '2022-008652STR', 'Eileen', 'Entire Room', '0.0', '176'])
 
-        # check that the header row is correct
+    last_row = csv_lines[-1]
+    self.assertEqual(last_row, ['Guest suite in Mission District', '755957132088408739', 'STR-0000315', 'HostWell', 'Entire Room', '5.0', '125'])
 
-        # check that the next row is Apartment in Noe Valley,824047084487341932,2022-008652STR,Eileen,Entire Room,0.0,176
+    # Redefining csv_lines before the second use
+    write_csv(detailed_data, "test.csv")
+    csv_lines = []
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
+        csv_reader = csv.reader(f)
+        for i in csv_reader:
+            csv_lines.append(i)
 
-        # check that the last row is Guest suite in Mission District,755957132088408739,STR-0000315,HostWell,Entire Room,5.0,125
+    self.assertEqual(len(csv_lines), 19)
+
+
+
 
     def test_find_invalid_policy_numbers(self):
         # call make_listing_database on "html_files/search_results.html"
@@ -354,14 +372,14 @@ class TestCases(unittest.TestCase):
 
         # check that the return value is a list
         self.assertEqual(type(invalid_listings), list)
-
-        # check that the elements in the list are tuples
-        # and that there are exactly three element in each tuple
+        for i in invalid_listings:
+            self.assertEqual(type(i), tuple)
+            self.assertEqual(len(i), 3)
 
 def main (): 
     detailed_data = make_listing_database("html_files/search_results.html")
     write_csv(detailed_data, "airbnb_dataset.csv")
 
 if __name__ == '__main__':
-    # main()
+    main()
     unittest.main(verbosity=2)
