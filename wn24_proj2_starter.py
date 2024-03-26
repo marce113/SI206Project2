@@ -114,7 +114,7 @@ def listing_details(listing_id):
                 break
 
         return (policy_number, host_name, place_type, review_score, nightly_price)
-        
+
 
 def make_listing_database(html_file): 
     """
@@ -135,7 +135,19 @@ def make_listing_database(html_file):
     Example output: 
         [('Loft in Mission District', '1944564', '2022-004088STR', 'Brian', 'Entire Room', 4.98, 181), ('Home in Mission District', '49043049', 'Cherry', 'Pending', 'Entire Room', 4.93, 147), ...]    
     """
-    pass
+     #Make a list from retrieve_listing of the basic listing info
+    basic_listings = retrieve_listings(html_file)
+
+    # Retrieve detailed information for each listing and combine them
+    complete_listing_list = []
+    for title, listing_id in basic_listings:
+        policy_number, host_name, place_type, average_review_score, nightly_price = listing_details(listing_id)
+        All_info = (title, listing_id, policy_number, host_name, place_type, average_review_score, nightly_price)
+        complete_listing_list.append(All_info)
+
+    return complete_listing_list
+   
+
 
 
 def write_csv(data, filename): 
