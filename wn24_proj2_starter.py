@@ -302,7 +302,7 @@ class TestCases(unittest.TestCase):
             self.assertEqual(type(info[4]), int)
 
         # check that the first listings in the html_list has the correct policy number
-
+    
         # check that the last listings in the html_list has the correct place type
 
         # check that the third listings has the correct cost
@@ -367,9 +367,6 @@ def test_write_csv(self):
     next_row = csv_lines[1]
     expected =   ['Apartment in Noe Valley', '824047084487341932', '2022-008652STR', 'Eileen', 'Entire Room', '0.0', '176']
     self.assertEqual(next_row, expected)
-
-
-
 
 
 
