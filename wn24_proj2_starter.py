@@ -194,7 +194,20 @@ def find_invalid_policy_numbers(data):
     [('1944564', 'Brian', '2022-004088STR'), ...]
 
     """
-    pass 
+       invalid_policy_numbers = []
+
+    # Regular expression pattern to match valid policy numbers
+    valid_pattern = re.compile(r'^(20\d{2}-00\d{4}STR|STR-000\d{4})$')
+
+    for listing_id, _, policy_number, host_names, _, _, _ in data:
+        # Skip over any "Pending" or "Exempt" policy numbers
+        if policy_number in ["Pending", "Exempt"]:
+            continue
+
+        # Check if the policy number matches the valid pattern
+        if not valid_pattern.match(policy_number):
+            # If it doesn't match, add it to the list of invalid policy numbers
+            invalid_policy_numbers.append((listing_id, host_names, policy_number))
 
 # EXTRA CREDIT 
 def goodreads_searcher(query): 
