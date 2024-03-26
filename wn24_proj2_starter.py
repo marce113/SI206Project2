@@ -4,6 +4,9 @@ import os
 import csv
 import unittest
 
+# Marcela Passos and CarolinaJanicke
+# Used Chat GPT to help debug and make functions more effecient
+
 # IMPORTANT NOTE:
 """
 If you are getting "encoding errors" while trying to open, read, or write from a file, add the following argument to any of your open() functions:
@@ -29,7 +32,7 @@ def retrieve_listings(html_file):
         [('Loft in Mission District', '1944564'), ('Home in Mission District', '49043049'), ...]
 
     """
-     with open(html_file, 'r', encoding="utf-8-sig") as file: 
+    with open(html_file, 'r', encoding="utf-8-sig") as file: 
         html_data = file.read()
 
     soup = BeautifulSoup(html_data, 'html.parser')
@@ -71,7 +74,7 @@ def listing_details(listing_id):
         ('2022-004088STR', 'Brian', 'Entire Room', 4.98, 181)
 
     """
-     with open(f"html_files/listing_{listing_id}.html", 'r', encoding="utf-8-sig") as file:
+    with open(f"html_files/listing_{listing_id}.html", 'r', encoding="utf-8-sig") as file:
         soup = BeautifulSoup(file, 'html.parser')
         
         # get policy number
@@ -166,7 +169,11 @@ def write_csv(data, filename):
 
 
     """
-       with open(filename, mode='w', newline='', encoding='utf-8-sig') as file:
+   # Sort the data in ascending order by average review score
+    sorted_data = sorted(data, key = lambda x: x[5])    # lambda is the function to get the average review score from the 5th index in each tuple
+    
+
+    with open(filename, mode='w', newline='', encoding='utf-8-sig') as file:
         writer = csv.writer(file)
         
         # Write the header row
@@ -194,7 +201,7 @@ def find_invalid_policy_numbers(data):
     [('1944564', 'Brian', '2022-004088STR'), ...]
 
     """
-       invalid_policy_numbers = []
+    invalid_policy_numbers = []
 
     # Regular expression pattern to match valid policy numbers
     valid_pattern = re.compile(r'^(20\d{2}-00\d{4}STR|STR-000\d{4})$')
