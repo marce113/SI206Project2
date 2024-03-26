@@ -29,7 +29,18 @@ def retrieve_listings(html_file):
         [('Loft in Mission District', '1944564'), ('Home in Mission District', '49043049'), ...]
 
     """
-    pass 
+     with open(html_file, 'r', encoding="utf-8-sig") as file: 
+        html_data = file.read()
+
+    soup = BeautifulSoup(html_data, 'html.parser')
+    listings = soup.find_all('div', class_='t1jojoys dir dir-ltr')
+    listing_list = []
+    for listings in listings:
+            title = listings.get_text()
+            listing_id = re.search(r'id="title_(\d+)', str(listings)).group(1)
+            listing_list.append((title, listing_id))
+  
+    return listing_list
 
 def listing_details(listing_id): 
     """
