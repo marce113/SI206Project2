@@ -166,7 +166,16 @@ def write_csv(data, filename):
 
 
     """
-    pass
+       with open(filename, mode='w', newline='', encoding='utf-8-sig') as file:
+        writer = csv.writer(file)
+        
+        # Write the header row
+        header = ["Listing Title", "Listing ID", "Policy Number", "Host Name(s)", "Place Type", "Average Review Score", "Nightly Rate"]
+        writer.writerow(header)
+        
+        # Write each tuple in sorted_data to the CSV
+        for row in sorted_data:
+            writer.writerow(row)
 
 def find_invalid_policy_numbers(data):
     """
